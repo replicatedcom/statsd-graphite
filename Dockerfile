@@ -74,6 +74,8 @@ RUN chmod 775 /opt/graphite_syncdb
 RUN /opt/graphite_syncdb
 
 # Expose common ports
+EXPOSE 80
+EXPOSE 443
 EXPOSE 2443
 EXPOSE 8125/udp
 

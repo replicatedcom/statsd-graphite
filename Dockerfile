@@ -85,4 +85,4 @@ VOLUME /opt/graphite/storage
 VOLUME /opt/graphite/conf
 
 # Start supervisor by default
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-l", "/tmp/supervisord.log"]

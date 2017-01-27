@@ -84,5 +84,9 @@ VOLUME /var/log
 VOLUME /opt/graphite/storage
 VOLUME /opt/graphite/conf
 
+# Make directory for PID file and logs
+RUN mkdir -p /tmp/supervisord
+RUN chmod a+rwx /tmp/supervisord
+
 # Start supervisor by default
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-l", "/tmp/supervisord.log"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-l", "/tmp/supervisord/supervisord.log", "-j", "/tmp/supervisord/supervisord.pid"]

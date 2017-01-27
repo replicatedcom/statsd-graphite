@@ -74,9 +74,7 @@ RUN chmod 775 /opt/graphite_syncdb
 RUN /opt/graphite_syncdb
 
 # Expose common ports
-#EXPOSE 80
-EXPOSE 443
-#EXPOSE 2003
+EXPOSE 2443
 EXPOSE 8125/udp
 
 # Enable users of this container to mount their volumes (optional)

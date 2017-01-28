@@ -78,14 +78,14 @@ EXPOSE 443
 EXPOSE 2443
 EXPOSE 8125/udp
 
+# Set up required directories with permissions
+RUN mkdir -p /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage
+RUN chmod a+rwx /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage
+
 # Enable users of this container to mount their volumes (optional)
 VOLUME /var/log
 VOLUME /opt/graphite/storage
 VOLUME /opt/graphite/conf
-
-# Make directory for PID file and logs
-RUN mkdir -p /tmp/supervisord
-RUN chmod a+rwx /tmp/supervisord
 
 # Start supervisor by default
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-l", "/tmp/supervisord/supervisord.log", "-j", "/tmp/supervisord/supervisord.pid"]

@@ -83,9 +83,7 @@ RUN mkdir -p /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /
 RUN chmod a+rwx /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage
 
 # Enable users of this container to mount their volumes (optional)
-VOLUME /var/log
-VOLUME /opt/graphite/storage
-VOLUME /opt/graphite/conf
+VOLUME /var/log /opt/graphite/storage /opt/graphite/conf
 
 # Start supervisor by default
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-l", "/tmp/supervisord/supervisord.log", "-j", "/tmp/supervisord/supervisord.pid"]

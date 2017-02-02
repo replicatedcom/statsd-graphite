@@ -74,13 +74,12 @@ RUN chmod 775 /opt/graphite_syncdb
 RUN /opt/graphite_syncdb
 
 # Expose common ports
-EXPOSE 443
 EXPOSE 2443
 EXPOSE 8125/udp
 
 # Set up required directories with permissions
-RUN mkdir -p /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage
-RUN chmod -R a+rwx /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage
+RUN mkdir -p /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage /var/run/nginx
+RUN chmod -R a+rwx /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage /var/run/nginx
 
 # Enable users of this container to mount their volumes (optional)
 VOLUME /var/log /opt/graphite/storage /opt/graphite/conf

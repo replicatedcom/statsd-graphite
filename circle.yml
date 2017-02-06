@@ -18,5 +18,5 @@ deployment:
       - sudo docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - sudo docker build -t replicated/statsd-graphite:latest .
       - sudo docker tag replicated/statsd-graphite:$STATSD_GRAPHITE_TAG replicated/statsd-graphite:latest
-      - sudo docker push replicated/statsd-grpahite:latest
+      - sudo docker push replicated/statsd-graphite:latest
       - sudo docker push replicated/statsd-graphite:$STATSD_GRAPHITE_TAG

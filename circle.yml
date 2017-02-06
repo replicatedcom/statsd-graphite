@@ -20,7 +20,7 @@ test:
 deployment:
   docker:
     branch: master
-    owner: replicated
+    owner: replicatedcom
     commands:
       - cd $HOME/src/github.com/replicatedcom/statsd-graphite
       - sudo docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS

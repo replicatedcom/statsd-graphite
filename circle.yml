@@ -11,11 +11,11 @@ checkout:
 
 test:
   pre:
-    - echo "NO TESTS"
+    - echo "No test pre commands"
   override:
-    - echo "NO TESTS"
+    - echo "No test override commands"
   post:
-    - echo "NO TESTS"
+    - echo "No test post commands"
 
 deployment:
   docker:

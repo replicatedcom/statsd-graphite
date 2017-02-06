@@ -16,7 +16,5 @@ deployment:
     commands:
       - cd $HOME/src/github.com/replicatedcom/statsd-graphite
       - sudo docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - sudo docker build -t replicated/statsd-graphite:latest .
-      - sudo docker tag replicated/statsd-graphite:$STATSD_GRAPHITE_TAG replicated/statsd-graphite:latest
-      - sudo docker push replicated/statsd-graphite:latest
+      - sudo docker build -t replicated/statsd-graphite:$STATSD_GRAPHITE_TAG .
       - sudo docker push replicated/statsd-graphite:$STATSD_GRAPHITE_TAG

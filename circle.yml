@@ -10,6 +10,12 @@ checkout:
     - cp -r $HOME/statsd-graphite $HOME/src/github.com/replicatedcom/statsd-graphite
 
 test:
+  pre:
+    - echo "NO TESTS"
+  override:
+    - echo "NO TESTS"
+  post:
+    - echo "NO TESTS"
 
 deployment:
   docker:

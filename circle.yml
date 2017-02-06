@@ -9,6 +9,8 @@ checkout:
     - mkdir -p $HOME/src/github.com/replicatedcom
     - cp -r $HOME/statsd-graphite $HOME/src/github.com/replicatedcom/statsd-graphite
 
+test:
+
 deployment:
   docker:
     branch: master

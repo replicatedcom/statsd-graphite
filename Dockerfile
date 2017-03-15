@@ -78,11 +78,11 @@ EXPOSE 2443
 EXPOSE 8125/udp
 
 # Set up required directories with permissions
-RUN mkdir -p /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage /var/run/nginx
-RUN chmod -R a+rwx /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage /var/run/nginx
+RUN mkdir -p /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage /var/run/nginx /crypto
+RUN chmod -R a+rwx /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage /var/run/nginx /crypto
 
 # Enable users of this container to mount their volumes (optional)
-VOLUME /var/log /opt/graphite/storage /opt/graphite/conf
+VOLUME /var/log /opt/graphite/storage /opt/graphite/conf /crypto
 
 # Start supervisor by default
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-l", "/tmp/supervisord/supervisord.log", "-j", "/tmp/supervisord/supervisord.pid"]

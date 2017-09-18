@@ -2,7 +2,7 @@ machine:
   services:
     - docker
   environment:
-    STATSD_GRAPHITE_TAG: 0.1.1
+    GIT_SHA1: $(echo $CIRCLE_SHA1 | cut -c -7)
 
 checkout:
   post:
@@ -24,5 +24,5 @@ deployment:
     commands:
       - cd $HOME/src/github.com/replicatedcom/statsd-graphite
       - sudo docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - sudo docker build -t replicated/statsd-graphite:$STATSD_GRAPHITE_TAG .
-      - sudo docker push replicated/statsd-graphite:$STATSD_GRAPHITE_TAG
+      - sudo docker build --rm=false -t replicated/statsd-graphite:$GIT_SHA1 .
+      - sudo docker push replicated/statsd-graphite:$GIT_SHA1

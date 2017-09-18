@@ -1,4 +1,4 @@
-FROM alpine:3.3
+FROM alpine:3.6
 MAINTAINER Matej Kramny <matejkramny@gmail.com>
 
 # Borrowed from https://github.com/CastawayLabs/graphite-statsd

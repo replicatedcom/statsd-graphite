@@ -1,59 +1,40 @@
 FROM alpine:3.6
-MAINTAINER Matej Kramny <matejkramny@gmail.com>
 
 # Borrowed from https://github.com/CastawayLabs/graphite-statsd
 # Initial work from https://github.com/hopsoft/docker-graphite-statsd
+# More from https://github.com/yesoreyeram/graphite-setup
 
 # Install dependencies
-RUN apk add --update \
+RUN apk add --update --no-cache \
   nginx \
   supervisor \
   openssl \
-  expect \
   nodejs \
   tzdata \
-  py-cairo \
-  py-pip && \
- rm -rf /var/cache/apk/*
+  libffi \
+  gtk+ \
+  gcc \
+  py-pip \
+  uwsgi \
+  uwsgi-python \
+ && rm -rf /var/cache/apk/*
 
-RUN apk add --update gcc python-dev musl-dev && \
-  pip install twisted==11.1.0 && \
-  apk del gcc python-dev musl-dev && \
-  rm -rf /var/cache/apk/*
-
-# Configure log dirs (might be useless)
-RUN mkdir -p /var/log/nginx
-RUN mkdir -p /var/log/carbon
-RUN mkdir -p /var/log/graphite
-
-# python-memcached==1.53 \
-RUN pip install \
-  django==1.3 \
-  django-tagging==0.3.1 \
-  whisper==0.9.12 \
-  flup==1.0.2
-
-# Install Graphite/Whisper/Carbon
-RUN apk add --update git && \
-  git clone -b 0.9.12 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web && \
-  cd /usr/local/src/graphite-web && \
-  python ./setup.py install && \
-  git clone -b 0.9.12 https://github.com/graphite-project/whisper.git /usr/local/src/whisper && \
-  cd /usr/local/src/whisper && \
-  python ./setup.py install && \
-  git clone -b 0.9.12 https://github.com/graphite-project/carbon.git /usr/local/src/carbon && \
-  cd /usr/local/src/carbon && \
-  python ./setup.py install && \
-  git clone -b v0.7.2 https://github.com/etsy/statsd.git /opt/statsd && \
-  apk del git && \
-  rm -rf /var/cache/apk/*
+RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git \
+  && pip install -r https://raw.githubusercontent.com/graphite-project/whisper/1.0.2/requirements.txt \
+  && pip install -r https://raw.githubusercontent.com/graphite-project/carbon/1.0.2/requirements.txt \
+  && pip install -r https://raw.githubusercontent.com/graphite-project/graphite-web/1.0.2/requirements.txt \
+  && pip install https://github.com/graphite-project/carbon/tarball/1.0.2 \
+  && pip install https://github.com/graphite-project/graphite-web/tarball/1.0.2 \
+  && git clone -b v0.8.0 https://github.com/etsy/statsd.git /opt/statsd \
+  && apk del linux-headers musl-dev python-dev libffi-dev git \
+  && rm -rf /var/cache/apk/*
 
 # Configure nginx site
 RUN rm -rf /etc/nginx/sites-enabled/*
 
 ADD conf/nginx.conf /etc/nginx/nginx.conf
-ADD conf/graphite-site.conf /etc/nginx/sites-enabled/graphite
-ADD conf/graphite_syncdb.sh /opt/graphite_syncdb
+ADD conf/graphite.ini /etc/uwsgi/apps-enabled/conf/graphite.ini
+ADD conf/graphite.conf /etc/nginx/sites-enabled/graphite
 ADD conf/supervisord.conf /etc/supervisord.conf
 
 # Graphite/statsd/carbon config files
@@ -68,18 +49,18 @@ ADD conf/storage-aggregation.conf /opt/graphite/conf/storage-aggregation.conf
 ADD conf/storage-schemas.conf /opt/graphite/conf/storage-schemas.conf
 ADD conf/whitelist.conf /opt/graphite/conf/whitelist.conf
 ADD conf/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
+RUN mv /opt/graphite/conf/graphite.wsgi.example /opt/graphite/conf/wsgi.py
+
+# Set up required directories with permissions
+RUN mkdir -p /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /var/log/uwsgi /opt/graphite/storage /var/run/nginx /crypto
+RUN chmod -R a+rwx /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /var/log/uwsgi /opt/graphite/storage /var/run/nginx /crypto
 
 # Configure django DB
-RUN chmod 775 /opt/graphite_syncdb
-RUN /opt/graphite_syncdb
+RUN PYTHONPATH=/opt/graphite/webapp python /usr/bin/django-admin.py migrate --settings=graphite.settings --run-syncdb
 
 # Expose common ports
 EXPOSE 2443
 EXPOSE 8125/udp
-
-# Set up required directories with permissions
-RUN mkdir -p /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage /var/run/nginx /crypto
-RUN chmod -R a+rwx /tmp/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /opt/graphite/storage /var/run/nginx /crypto
 
 # Enable users of this container to mount their volumes (optional)
 VOLUME /var/log /opt/graphite/storage /opt/graphite/conf /crypto

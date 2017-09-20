@@ -52,8 +52,9 @@ ADD conf/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 RUN mv /opt/graphite/conf/graphite.wsgi.example /opt/graphite/conf/wsgi.py
 
 # Set up required directories with permissions
-RUN mkdir -p /var/log/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /var/log/uwsgi /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto
-RUN chmod -R a+rwx /var/log/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /var/log/uwsgi /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto
+RUN mkdir -p /var/log/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /var/log/uwsgi /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
+RUN cd /var/log/graphite/ && touch info.log exception.log
+RUN chmod -R a+rwx /var/log/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /var/log/uwsgi /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
 
 # Configure django DB
 RUN PYTHONPATH=/opt/graphite/webapp python /usr/bin/django-admin.py migrate --settings=graphite.settings --run-syncdb

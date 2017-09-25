@@ -17,6 +17,7 @@ RUN apk add --update --no-cache \
   py-pip \
   uwsgi \
   uwsgi-python \
+  uwsgi-logfile \
  && rm -rf /var/cache/apk/*
 
 RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git \

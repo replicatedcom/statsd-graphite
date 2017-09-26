@@ -39,6 +39,7 @@ ADD conf/graphite.conf /etc/nginx/sites-enabled/graphite
 ADD conf/supervisord.conf /etc/supervisord.conf
 
 # Graphite/statsd/carbon config files
+ADD conf/carbon.sh /carbon.sh
 ADD conf/statsd-config.js /opt/statsd/config.js
 ADD conf/aggregation-rules.conf /opt/graphite/conf/aggragation-rules.conf
 ADD conf/blacklist.conf /opt/graphite/conf/blacklist.conf
@@ -56,6 +57,7 @@ RUN mv /opt/graphite/conf/graphite.wsgi.example /opt/graphite/conf/wsgi.py
 RUN mkdir -p /var/log/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /var/log/uwsgi /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
 RUN cd /var/log/graphite/ && touch info.log exception.log
 RUN chmod -R a+rwx /var/log/supervisord /var/log/nginx /var/log/graphite /var/log/carbon /var/log/uwsgi /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
+RUN chmod a+x /carbon.sh
 
 # Configure django DB
 RUN PYTHONPATH=/opt/graphite/webapp python /usr/bin/django-admin.py migrate --settings=graphite.settings --run-syncdb

@@ -1,4 +1,4 @@
-FROM alpine:3.6
+FROM alpine:latest
 
 # Borrowed from https://github.com/CastawayLabs/graphite-statsd
 # Initial work from https://github.com/hopsoft/docker-graphite-statsd
@@ -6,6 +6,7 @@ FROM alpine:3.6
 
 # Install dependencies
 RUN apk add --update --no-cache \
+  ca-certificates \
   nginx \
   supervisor \
   openssl \

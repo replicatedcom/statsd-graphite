@@ -27,7 +27,7 @@ RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git
   && pip install -r https://raw.githubusercontent.com/graphite-project/graphite-web/1.0.2/requirements.txt \
   && pip install https://github.com/graphite-project/carbon/tarball/1.0.2 \
   && pip install https://github.com/graphite-project/graphite-web/tarball/1.0.2 \
-  && git clone -b v0.8.0 https://github.com/etsy/statsd.git /opt/statsd \
+  && git clone https://github.com/etsy/statsd.git /opt/statsd && (cd /opt/statsd && git checkout 8d5363cb109cc6363661a1d5813e0b96787c4411) \
   && apk del linux-headers musl-dev python-dev libffi-dev git \
   && rm -rf /var/cache/apk/*
 

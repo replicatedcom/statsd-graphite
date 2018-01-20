@@ -1,6 +1,4 @@
-# This is a specific version of alpine
-# TODO: use alpine:latest again
-FROM 37eec16f187294a31cf56273bd544eaf75f7972e309dce838c38be2dd3aa0a45
+FROM alpine:latest
 
 # Borrowed from https://github.com/CastawayLabs/graphite-statsd
 # Initial work from https://github.com/hopsoft/docker-graphite-statsd
@@ -21,7 +19,6 @@ RUN apk add --update --no-cache \
   uwsgi \
   uwsgi-python \
   uwsgi-logfile \
-  busybox=1.26.2-r9 \
  && rm -rf /var/cache/apk/*
 
 RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git \

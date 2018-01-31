@@ -23,6 +23,6 @@ deployment:
     owner: replicatedcom
     commands:
       - cd $HOME/src/github.com/replicatedcom/statsd-graphite
-      - sudo docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - sudo docker build --rm=false -t replicated/statsd-graphite:$GIT_SHA1 .
-      - sudo docker push replicated/statsd-graphite:$GIT_SHA1
+      - sudo docker login -u $DOCKER_REPLICATED_USER -p $DOCKER_REPLICATED_PASS
+      - sudo docker build --rm=false -t registry.replicated.com/library/statsd-graphite:$GIT_SHA1 .
+      - sudo docker push registry.replicated.com/library/statsd-graphite:$GIT_SHA1

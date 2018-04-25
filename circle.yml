@@ -24,5 +24,5 @@ deployment:
     commands:
       - cd $HOME/src/github.com/replicatedcom/statsd-graphite
       - sudo docker login -u="$DOCKER_REPLICATED_USER" -e="$DOCKER_REPLICATED_USER" -p="$DOCKER_REPLICATED_PASS" registry.replicated.com
-      - sudo docker build --no-cache --rm=false -t registry.replicated.com/library/statsd-graphite:$GIT_SHA1 .
+      - sudo docker build --pull --no-cache --rm=false -t registry.replicated.com/library/statsd-graphite:$GIT_SHA1 .
       - sudo docker push registry.replicated.com/library/statsd-graphite:$GIT_SHA1

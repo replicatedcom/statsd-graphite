@@ -32,7 +32,7 @@ RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git
   && rm -rf /var/cache/apk/*
 
 RUN apk update
-RUN apk upgrade
+RUN apk add -u libressl2.6-libssl libressl2.6-libcrypto
 
 # Configure nginx site
 RUN rm -rf /etc/nginx/sites-enabled/*

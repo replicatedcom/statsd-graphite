@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.7
 
 # Borrowed from https://github.com/CastawayLabs/graphite-statsd
 # Initial work from https://github.com/hopsoft/docker-graphite-statsd
@@ -30,9 +30,6 @@ RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git
   && git clone https://github.com/etsy/statsd.git /opt/statsd && (cd /opt/statsd && git checkout 8d5363cb109cc6363661a1d5813e0b96787c4411) \
   && apk del linux-headers musl-dev python-dev libffi-dev git \
   && rm -rf /var/cache/apk/*
-
-RUN apk update
-RUN apk add -u libressl2.6-libssl libressl2.6-libcrypto
 
 # Configure nginx site
 RUN rm -rf /etc/nginx/sites-enabled/*

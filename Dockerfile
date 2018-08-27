@@ -24,6 +24,7 @@ RUN apk add --update --no-cache \
 RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git \
   && pip install -r https://raw.githubusercontent.com/graphite-project/whisper/1.0.2/requirements.txt \
   && pip install -r https://raw.githubusercontent.com/graphite-project/carbon/1.0.2/requirements.txt \
+  && pip install whitenoise==3.3.1 \
   && pip install -r https://raw.githubusercontent.com/graphite-project/graphite-web/1.0.2/requirements.txt \
   && pip install https://github.com/graphite-project/carbon/tarball/1.0.2 \
   && pip install https://github.com/graphite-project/graphite-web/tarball/1.0.2 \

@@ -13,7 +13,7 @@ jobs:
           name: Build the image
           command: |
             export BUILD_SHA=${CIRCLE_SHA1:0:7} 
-            docker build --pull -t registry.replicated.com/library/statsd-graphite:$BUILD_SHA .
+            docker build --pull --no-cache -t registry.replicated.com/library/statsd-graphite:$BUILD_SHA .
       - run:
           name: Push the image
           command: |

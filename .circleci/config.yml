@@ -1,0 +1,32 @@
+version: 2
+
+jobs:
+
+  deploy_unstable:
+    docker:
+      - image: circleci/golang:1.11
+    working_directory: /go/src/github.com/replicatedcom/statsd-graphite
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build the image
+          command: |
+            export BUILD_SHA=${CIRCLE_SHA1:0:7} 
+            docker build --pull -t registry.replicated.com/library/statsd-graphite:$BUILD_SHA .
+      - run:
+          name: Push the image
+          command: |
+            export BUILD_SHA=${CIRCLE_SHA1:0:7} 
+            docker login -u ${DOCKER_REPLICATED_USER} -p ${DOCKER_REPLICATED_PASS}
+            docker push registry.replicated.com/library/statsd-graphite:$BUILD_SHA
+
+workflows:
+  version: 2
+  build_accept_deploy:
+    jobs:
+      - deploy_unstable:
+          filters:
+            branches:
+              only:
+              - ethan-circle2

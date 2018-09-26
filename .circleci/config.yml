@@ -29,4 +29,4 @@ workflows:
           filters:
             branches:
               only:
-              - ethan-circle2
+                - master

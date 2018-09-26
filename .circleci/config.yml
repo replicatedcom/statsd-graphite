@@ -18,7 +18,7 @@ jobs:
           name: Push the image
           command: |
             export BUILD_SHA=${CIRCLE_SHA1:0:7} 
-            docker login -u ${DOCKER_REPLICATED_USER} -p ${DOCKER_REPLICATED_PASS}
+            docker login registry.replicated.com -u ${DOCKER_REPLICATED_USER} -p ${DOCKER_REPLICATED_PASS}
             docker push registry.replicated.com/library/statsd-graphite:$BUILD_SHA
 
 workflows:

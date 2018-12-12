@@ -67,6 +67,8 @@ RUN chmod a+x /carbon.sh
 # Configure django DB
 RUN PYTHONPATH=/opt/graphite/webapp python /usr/bin/django-admin.py migrate --settings=graphite.settings --run-syncdb
 
+RUN chmod -R a+rwx /opt/graphite/storage
+
 # Expose common ports
 EXPOSE 2443
 EXPOSE 8125/udp

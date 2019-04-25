@@ -21,7 +21,6 @@ RUN apk add --update --no-cache \
   uwsgi-logfile \
   \
   \
-  libxml2 \
  && rm -rf /var/cache/apk/*
 
 RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git \

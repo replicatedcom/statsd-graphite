@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3.10
 
 # Borrowed from https://github.com/CastawayLabs/graphite-statsd
 # Initial work from https://github.com/hopsoft/docker-graphite-statsd

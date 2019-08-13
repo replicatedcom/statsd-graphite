@@ -12,6 +12,8 @@ RUN apk add --update --no-cache \
   openssl \
   nodejs \
   tzdata \
+  \
+  \
   libffi \
   gtk+ \
   gcc \
@@ -19,6 +21,9 @@ RUN apk add --update --no-cache \
   uwsgi \
   uwsgi-python \
   uwsgi-logfile \
+  musl \
+  musl-utils \
+  libtasn1 \
   \
   \
  && rm -rf /var/cache/apk/*

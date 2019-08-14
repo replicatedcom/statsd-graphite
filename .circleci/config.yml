@@ -52,6 +52,6 @@ workflows:
       - deploy_stable:
           filters:
             tags:
-              only: /^v[0-9]+(\.[0-9]+)*(-.*)*/
+              only: /^[0-9]+(\.[0-9]+)*(-.*)*/
             branches:
               ignore: /.*/

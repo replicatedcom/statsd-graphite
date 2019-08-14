@@ -22,11 +22,13 @@ RUN apk add --update --no-cache \
   uwsgi-python \
   uwsgi-logfile \
   musl \
-  musl-utils \
+  musl-utils>1.1.22-r3 \
   libtasn1 \
   \
   \
  && rm -rf /var/cache/apk/*
+
+RUN apk upgrade --no-cache
 
 RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git \
   && pip install -r https://raw.githubusercontent.com/graphite-project/whisper/1.0.2/requirements.txt \

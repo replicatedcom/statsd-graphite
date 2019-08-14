@@ -21,6 +21,22 @@ jobs:
             docker login registry.replicated.com -u ${DOCKER_REPLICATED_USER} -p ${DOCKER_REPLICATED_PASS}
             docker push registry.replicated.com/library/statsd-graphite:$BUILD_SHA
 
+  deploy_stable:
+    docker:
+      - image: circleci/golang:1.11
+    working_directory: /go/src/github.com/replicatedcom/statsd-graphite
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: pull and retag the image
+          command: |
+            export BUILD_SHA=${CIRCLE_SHA1:0:7}
+            docker login registry.replicated.com -u ${DOCKER_REPLICATED_USER} -p ${DOCKER_REPLICATED_PASS}
+            docker pull registry.replicated.com/library/statsd-graphite:$BUILD_SHA
+            docker tag registry.replicated.com/library/statsd-graphite:$BUILD_SHA registry.replicated.com/library/statsd-graphite:$CIRCLE_TAG
+            docker push registry.replicated.com/library/statsd-graphite:$CIRCLE_TAG
+
 workflows:
   version: 2
   build_accept_deploy:
@@ -30,3 +46,12 @@ workflows:
             branches:
               only:
                 - master
+
+  release:
+    jobs:
+      - deploy_stable:
+          filters:
+            tags:
+              only: /^[0-9]+(\.[0-9]+)*(-.*)*/
+            branches:
+              ignore: /.*/

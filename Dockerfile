@@ -1,36 +1,34 @@
-FROM alpine:3.10
+FROM debian:stretch-slim
 
 # Borrowed from https://github.com/CastawayLabs/graphite-statsd
 # Initial work from https://github.com/hopsoft/docker-graphite-statsd
 # More from https://github.com/yesoreyeram/graphite-setup
 
 # Install dependencies
-RUN apk add --update --no-cache \
-  ca-certificates \
-  nginx \
-  supervisor \
-  openssl \
-  nodejs \
-  tzdata \
-  \
-  \
-  libffi \
-  gtk+ \
-  gcc \
-  py-pip \
-  uwsgi \
-  uwsgi-python \
-  uwsgi-logfile \
-  musl \
-  musl-utils>1.1.22-r3 \
-  libtasn1 \
-  \
-  \
- && rm -rf /var/cache/apk/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    nginx \
+    supervisor \
+    openssl \
+    tzdata \
+    nodejs \
+    libpython2.7 \
+    libcairo2 \
+  && apt-get clean \
+  && apt-get autoremove -y \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN apk upgrade --no-cache
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+  && apt-get install -y --no-install-recommends \
+    nodejs \
+  && apt-get clean \
+  && apt-get autoremove -y \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git \
+RUN apt-get update && apt-get install -y --no-install-recommends gcc python-pip python-dev python-setuptools libffi-dev git \
+  && pip install wheel \
+  && pip install uwsgi==2.0.18 \
   && pip install -r https://raw.githubusercontent.com/graphite-project/whisper/1.0.2/requirements.txt \
   && pip install -r https://raw.githubusercontent.com/graphite-project/carbon/1.0.2/requirements.txt \
   && pip install whitenoise==3.3.1 \
@@ -38,8 +36,10 @@ RUN apk add --update --no-cache linux-headers musl-dev python-dev libffi-dev git
   && pip install https://github.com/graphite-project/carbon/tarball/1.0.2 \
   && pip install https://github.com/graphite-project/graphite-web/tarball/1.0.2 \
   && git clone https://github.com/etsy/statsd.git /opt/statsd && (cd /opt/statsd && git checkout 8d5363cb109cc6363661a1d5813e0b96787c4411) \
-  && apk del linux-headers musl-dev python-dev libffi-dev git \
-  && rm -rf /var/cache/apk/*
+  && apt-get remove -y gcc python-pip python-dev python-setuptools libffi-dev git \
+  && apt-get clean \
+  && apt-get autoremove -y \
+  && rm -rf /var/lib/apt/lists/*
 
 # Configure nginx site
 RUN rm -rf /etc/nginx/sites-enabled/*
@@ -71,7 +71,7 @@ RUN chmod -R a+rwx /var/log/supervisord /var/log/nginx /var/log/graphite /var/lo
 RUN chmod a+x /carbon.sh
 
 # Configure django DB
-RUN PYTHONPATH=/opt/graphite/webapp python /usr/bin/django-admin.py migrate --settings=graphite.settings --run-syncdb
+RUN PYTHONPATH=/opt/graphite/webapp python /usr/local/bin/django-admin.py migrate --settings=graphite.settings --run-syncdb
 
 RUN chmod -R a+rwx /opt/graphite/storage
 

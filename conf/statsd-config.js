@@ -5,5 +5,6 @@
   flushInterval: 1000,
   backends: [ "./backends/graphite" ],
   deleteIdleStats: true,
-  deleteGauges: true
+  deleteGauges: true,
+  automaticConfigReload: false
 }

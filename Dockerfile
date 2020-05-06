@@ -65,8 +65,8 @@ ADD conf/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 RUN mv /opt/graphite/conf/graphite.wsgi.example /opt/graphite/conf/wsgi.py
 
 # Set up required directories with permissions
-RUN mkdir -p /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
-RUN chmod -R a+rwx /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
+RUN mkdir -p /var/log/supervisor /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
+RUN chmod -R a+rwx /var/log/supervisor /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
 RUN chmod a+x /carbon.sh
 
 # Configure django DB
@@ -82,4 +82,4 @@ EXPOSE 8125/udp
 VOLUME /var/log /opt/graphite/storage /opt/graphite/conf /crypto
 
 # Start supervisor by default
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-j", "/var/run/supervisord/supervisord.pid"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-l", "/var/log/supervisor/supervisord.log", "-j", "/var/run/supervisord/supervisord.pid"]

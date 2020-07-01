@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openssl \
     tzdata \
     nodejs \
-    libpython2.7 \
-    libcairo2 \
+    python3-dev \
+    python3-cairo \
   && apt-get clean \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*
@@ -26,17 +26,19 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y --no-install-recommends gcc python-pip python-dev python-setuptools libffi-dev git \
-  && pip install wheel \
-  && pip install uwsgi==2.0.18 \
-  && pip install -r https://raw.githubusercontent.com/graphite-project/whisper/1.0.2/requirements.txt \
-  && pip install -r https://raw.githubusercontent.com/graphite-project/carbon/1.0.2/requirements.txt \
-  && pip install whitenoise==3.3.1 \
-  && pip install -r https://raw.githubusercontent.com/graphite-project/graphite-web/1.0.2/requirements.txt \
-  && pip install https://github.com/graphite-project/carbon/tarball/1.0.2 \
-  && pip install https://github.com/graphite-project/graphite-web/tarball/1.0.2 \
-  && git clone https://github.com/etsy/statsd.git /opt/statsd && (cd /opt/statsd && git checkout 8d5363cb109cc6363661a1d5813e0b96787c4411) \
-  && apt-get remove -y gcc python-pip python-dev python-setuptools libffi-dev git \
+ARG version=1.1.7
+ARG statsd_version=0.8.6
+
+RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-pip python3-setuptools libffi-dev git \
+  && pip3 install wheel \
+  && pip3 install uwsgi==2.0.19.1 \
+  && pip3 install -r https://raw.githubusercontent.com/graphite-project/whisper/${version}/requirements.txt \
+  && pip3 install -r https://raw.githubusercontent.com/graphite-project/carbon/${version}/requirements.txt \
+  && pip3 install -r https://raw.githubusercontent.com/graphite-project/graphite-web/${version}/requirements.txt \
+  && pip3 install https://github.com/graphite-project/carbon/tarball/${version} \
+  && pip3 install https://github.com/graphite-project/graphite-web/tarball/${version} \
+  && git clone https://github.com/etsy/statsd.git /opt/statsd && (cd /opt/statsd && git checkout tags/v"${statsd_version}") \
+  && apt-get remove -y gcc python3-pip python3-setuptools libffi-dev git \
   && apt-get clean \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*
@@ -70,7 +72,7 @@ RUN chmod -R a+rwx /var/log/supervisor /var/log/nginx /opt/graphite/storage /var
 RUN chmod a+x /carbon.sh
 
 # Configure django DB
-RUN PYTHONPATH=/opt/graphite/webapp python /usr/local/bin/django-admin.py migrate --settings=graphite.settings --run-syncdb
+RUN PYTHONPATH=/opt/graphite/webapp python3 /usr/local/bin/django-admin.py migrate --settings=graphite.settings --run-syncdb
 
 RUN chmod -R a+rwx /opt/graphite/storage
 

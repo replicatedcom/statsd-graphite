@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
 # Borrowed from https://github.com/CastawayLabs/graphite-statsd
 # Initial work from https://github.com/hopsoft/docker-graphite-statsd
@@ -13,15 +13,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openssl \
     tzdata \
     nodejs \
+    npm \
     python3-dev \
     python3-cairo \
-  && apt-get clean \
-  && apt-get autoremove -y \
-  && rm -rf /var/lib/apt/lists/*
-
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
-  && apt-get install -y --no-install-recommends \
-    nodejs \
   && apt-get clean \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*
@@ -31,13 +25,25 @@ ARG statsd_version=0.8.6
 
 RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-pip python3-setuptools libffi-dev git \
   && pip3 install wheel \
-  && pip3 install uwsgi==2.0.19.1 \
-  && pip3 install -r https://raw.githubusercontent.com/graphite-project/whisper/${version}/requirements.txt \
-  && pip3 install -r https://raw.githubusercontent.com/graphite-project/carbon/${version}/requirements.txt \
-  && pip3 install -r https://raw.githubusercontent.com/graphite-project/graphite-web/${version}/requirements.txt \
-  && pip3 install https://github.com/graphite-project/carbon/tarball/${version} \
-  && pip3 install https://github.com/graphite-project/graphite-web/tarball/${version} \
-  && git clone https://github.com/etsy/statsd.git /opt/statsd && (cd /opt/statsd && git checkout tags/v"${statsd_version}") \
+  && pip3 install uwsgi \
+  && pip3 install virtualenv==16.7.10 \
+  && virtualenv /opt/graphite \
+  && . /opt/graphite/bin/activate \
+  && git clone -b ${version} --depth 1 https://github.com/graphite-project/whisper.git /usr/local/src/whisper \
+  && cd /usr/local/src/whisper \
+  && python3 ./setup.py install \
+  && git clone -b ${version} --depth 1 https://github.com/graphite-project/carbon.git /usr/local/src/carbon \
+  && cd /usr/local/src/carbon \
+  && pip3 install -r requirements.txt \
+  && python3 ./setup.py install \
+  && git clone -b ${version} --depth 1 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web \
+  && cd /usr/local/src/graphite-web \
+  && pip3 install -r requirements.txt \
+  && python3 ./setup.py install \
+  && git clone https://github.com/statsd/statsd.git /opt/statsd \
+  && cd /opt/statsd \
+  && git checkout tags/v"${statsd_version}" \
+  && npm install \
   && apt-get remove -y gcc python3-pip python3-setuptools libffi-dev git \
   && apt-get clean \
   && apt-get autoremove -y \
@@ -53,16 +59,8 @@ ADD conf/supervisord.conf /etc/supervisord.conf
 
 # Graphite/statsd/carbon config files
 ADD conf/carbon.sh /carbon.sh
-ADD conf/statsd-config.js /opt/statsd/config.js
-ADD conf/aggregation-rules.conf /opt/graphite/conf/aggragation-rules.conf
-ADD conf/blacklist.conf /opt/graphite/conf/blacklist.conf
-ADD conf/carbon.amqp.conf /opt/graphite/conf/carbon.amqp.conf
-ADD conf/carbon.conf /opt/graphite/conf/carbon.conf
-ADD conf/relay-rules.conf /opt/graphite/conf/relay-rules.conf
-ADD conf/rewrite-rules.conf /opt/graphite/conf/rewrite-rules.conf
-ADD conf/storage-aggregation.conf /opt/graphite/conf/storage-aggregation.conf
-ADD conf/storage-schemas.conf /opt/graphite/conf/storage-schemas.conf
-ADD conf/whitelist.conf /opt/graphite/conf/whitelist.conf
+ADD conf/statsd/config.js /opt/statsd/config.js
+ADD conf/graphite/ /opt/graphite/conf/
 ADD conf/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 RUN mv /opt/graphite/conf/graphite.wsgi.example /opt/graphite/conf/wsgi.py
 
@@ -72,7 +70,9 @@ RUN chmod -R a+rwx /var/log/supervisor /var/log/nginx /opt/graphite/storage /var
 RUN chmod a+x /carbon.sh
 
 # Configure django DB
-RUN PYTHONPATH=/opt/graphite/webapp python3 /usr/local/bin/django-admin.py migrate --settings=graphite.settings --run-syncdb
+RUN mkdir -p /var/log/graphite/ \
+  && PYTHONPATH=/opt/graphite/webapp /opt/graphite/bin/django-admin.py collectstatic --noinput --settings=graphite.settings \
+  && PYTHONPATH=/opt/graphite/webapp /opt/graphite/bin/django-admin.py migrate --noinput --settings=graphite.settings --run-syncdb
 
 RUN chmod -R a+rwx /opt/graphite/storage
 

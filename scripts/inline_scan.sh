@@ -1,8 +1,6 @@
 #!/bin/bash
 
-set -ex
-
-echo "IMAGE_NAME = $IMAGE_NAME"
+set -e
 
 run_cmd="curl -s https://ci-tools.anchore.io/inline_scan-${ANCHORE_VERSION} | bash -s -- -r -t $TIMEOUT"
 if $POLICY_FAILURE; then

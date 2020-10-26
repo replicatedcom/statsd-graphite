@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 ARG version=1.1.7
-ARG statsd_version=0.8.6
+ARG statsd_version=0.9.0
 
 RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-pip python3-setuptools libffi-dev git \
   && pip3 install wheel \

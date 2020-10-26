@@ -1,5 +1,5 @@
 IMAGE_NAME ?= registry.replicated.com/library/statsd-graphite:latest
-ANCHORE_VERSION := v0.7.2
+ANCHORE_VERSION := v0.8.2
 
 export IMAGE_NAME
 export ANCHORE_VERSION

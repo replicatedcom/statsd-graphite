@@ -2,6 +2,25 @@ version: 2
 
 jobs:
 
+  build_and_test:
+    docker:
+      - image: circleci/golang:1.14
+    working_directory: /go/src/github.com/replicatedcom/statsd-graphite
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build the image
+          command: |
+            export BUILD_SHA=${CIRCLE_SHA1:0:7} 
+            docker build --pull -t registry.replicated.com/library/statsd-graphite:$BUILD_SHA .
+      - run:
+          name: Scan the image
+          command: |
+            export BUILD_SHA=${CIRCLE_SHA1:0:7} 
+            export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$BUILD_SHA
+            make scan
+
   deploy_unstable:
     docker:
       - image: circleci/golang:1.14
@@ -14,6 +33,12 @@ jobs:
           command: |
             export BUILD_SHA=${CIRCLE_SHA1:0:7} 
             docker build --pull -t registry.replicated.com/library/statsd-graphite:$BUILD_SHA .
+      - run:
+          name: Scan the image
+          command: |
+            export BUILD_SHA=${CIRCLE_SHA1:0:7} 
+            export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$BUILD_SHA
+            make scan
       - run:
           name: Push the image
           command: |
@@ -33,6 +58,11 @@ jobs:
           command: |
             docker build --pull -t registry.replicated.com/library/statsd-graphite:$CIRCLE_TAG .
       - run:
+          name: Scan the image
+          command: |
+            export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$CIRCLE_TAG
+            make scan
+      - run:
           name: Push the image
           command: |
             docker login registry.replicated.com -u ${DOCKER_REPLICATED_USER} -p ${DOCKER_REPLICATED_PASS}
@@ -40,6 +70,14 @@ jobs:
 
 workflows:
   version: 2
+  build_accept:
+    jobs:
+      - build_and_test:
+          filters:
+            branches:
+              ignore:
+                - master
+
   build_accept_deploy:
     jobs:
       - deploy_unstable:

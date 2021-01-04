@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     npm \
     python3-dev \
     python3-cairo \
+    \
+    \
+    libp11-kit0 \
   && apt-get clean \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*

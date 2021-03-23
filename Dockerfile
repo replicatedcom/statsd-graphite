@@ -77,7 +77,11 @@ RUN mkdir -p /var/log/graphite/ \
   && PYTHONPATH=/opt/graphite/webapp /opt/graphite/bin/django-admin.py collectstatic --noinput --settings=graphite.settings \
   && PYTHONPATH=/opt/graphite/webapp /opt/graphite/bin/django-admin.py migrate --noinput --settings=graphite.settings --run-syncdb
 
-RUN chmod -R a+rwx /opt/graphite/storage
+RUN chmod -R a+rwx \
+  /opt/graphite/storage \
+  # Fixes error Unable to write to plugin cache
+  /opt/graphite/lib/twisted/plugins \
+  /opt/graphite/lib/python3.7/site-packages/twisted/plugins
 
 # Expose common ports
 EXPOSE 2443

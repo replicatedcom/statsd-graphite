@@ -8,14 +8,15 @@ FROM debian:buster-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
+  && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
+  && apt-get install -y --no-install-recommends \
     nginx \
-    supervisor \
-    openssl \
-    tzdata \
     nodejs \
-    npm \
+    openssl \
     python3-dev \
     python3-cairo \
+    supervisor \
+    tzdata \
     \
     \
     libp11-kit0 \
@@ -23,10 +24,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*
 
-ARG version=1.1.7
+ARG version=1.1.8
 ARG statsd_version=0.9.0
 
-RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-pip python3-setuptools libffi-dev git \
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential python3-pip python3-setuptools libffi-dev git \
   && pip3 install wheel \
   && pip3 install uwsgi \
   && pip3 install virtualenv==16.7.10 \
@@ -47,7 +48,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-pip
   && cd /opt/statsd \
   && git checkout tags/v"${statsd_version}" \
   && npm install \
-  && apt-get remove -y gcc python3-pip python3-setuptools libffi-dev git \
+  && apt-get remove -y build-essential python3-pip python3-setuptools libffi-dev git \
   && apt-get clean \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*

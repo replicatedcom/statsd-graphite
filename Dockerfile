@@ -8,6 +8,10 @@ FROM debian:buster-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
+    gnupg1 \
+  && curl -LO https://nginx.org/keys/nginx_signing.key && apt-key add nginx_signing.key && rm nginx_signing.key \
+  && echo "deb https://nginx.org/packages/mainline/debian/ buster nginx" >> /etc/apt/sources.list \
+  && echo "deb-src http://nginx.org/packages/mainline/debian/ buster nginx" >> /etc/apt/sources.list \
   && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
   && apt-get install -y --no-install-recommends \
     nginx \

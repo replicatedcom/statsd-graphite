@@ -10,16 +10,11 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Build the image
-          command: |
-            export BUILD_SHA=${CIRCLE_SHA1:0:7} 
-            docker build --pull -t registry.replicated.com/library/statsd-graphite:$BUILD_SHA .
-      - run:
-          name: Scan the image
+          name: Build and scan the image
           command: |
             export BUILD_SHA=${CIRCLE_SHA1:0:7} 
             export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$BUILD_SHA
-            make scan
+            make build scan
 
   deploy_unstable:
     docker:
@@ -29,22 +24,12 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Build the image
+          name: Build, scan and push the image
           command: |
-            export BUILD_SHA=${CIRCLE_SHA1:0:7} 
-            docker build --pull -t registry.replicated.com/library/statsd-graphite:$BUILD_SHA .
-      - run:
-          name: Scan the image
-          command: |
+            echo $DOCKER_REPLICATED_PASS | docker login registry.replicated.com -u $DOCKER_REPLICATED_USER --password-stdin
             export BUILD_SHA=${CIRCLE_SHA1:0:7} 
             export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$BUILD_SHA
-            make scan
-      - run:
-          name: Push the image
-          command: |
-            export BUILD_SHA=${CIRCLE_SHA1:0:7} 
-            docker login registry.replicated.com -u ${DOCKER_REPLICATED_USER} -p ${DOCKER_REPLICATED_PASS}
-            docker push registry.replicated.com/library/statsd-graphite:$BUILD_SHA
+            make build scan push
 
   deploy_stable:
     docker:
@@ -54,19 +39,11 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Build the image
+          name: Build, scan and push the image
           command: |
-            docker build --pull -t registry.replicated.com/library/statsd-graphite:$CIRCLE_TAG .
-      - run:
-          name: Scan the image
-          command: |
+            echo $DOCKER_REPLICATED_PASS | docker login -u $DOCKER_REPLICATED_USER --password-stdin
             export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$CIRCLE_TAG
-            make scan
-      - run:
-          name: Push the image
-          command: |
-            docker login registry.replicated.com -u ${DOCKER_REPLICATED_USER} -p ${DOCKER_REPLICATED_PASS}
-            docker push registry.replicated.com/library/statsd-graphite:$CIRCLE_TAG
+            make build scan push
 
 workflows:
   version: 2

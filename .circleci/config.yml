@@ -41,7 +41,7 @@ jobs:
       - run:
           name: Build, scan and push the image
           command: |
-            echo $DOCKER_REPLICATED_PASS | docker login -u $DOCKER_REPLICATED_USER --password-stdin
+            echo $DOCKER_REPLICATED_PASS | docker login registry.replicated.com -u $DOCKER_REPLICATED_USER --password-stdin
             export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$CIRCLE_TAG
             make build scan push
 

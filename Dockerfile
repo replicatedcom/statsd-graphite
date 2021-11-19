@@ -46,6 +46,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
   && python3 ./setup.py install \
   && git clone -b ${version} --depth 1 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web \
   && cd /usr/local/src/graphite-web \
+  && sed -i 's/pyparsing.*/pyparsing>=2\.3\.0,<3\.0\.0/' requirements.txt \
   && pip3 install -r requirements.txt \
   && python3 ./setup.py install \
   && git clone https://github.com/statsd/statsd.git /opt/statsd \

@@ -8,6 +8,12 @@ export ANCHORE_VERSION
 build:
 	docker build --pull -t $(IMAGE_NAME) .
 
+# Original image currently cannot be built.  This is a quick hack to get dependnecies updated.
+# This command will build an image that will be based on the last successully built image.
+.PHONY: build-hack
+build-hack:
+	docker build --pull -f Dockerfile.hack -t $(IMAGE_NAME) .
+
 .PHONY: scan
 scan: export POLICY_FAILURE = true
 scan: export TIMEOUT = 6000

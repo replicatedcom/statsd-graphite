@@ -1,3 +1,8 @@
+# Compatibility issues
+
+Current Dockerfil does not build.
+The build process has been updated for now to use the last successfully built image and upgrade dependencies in an additional layer.
+
 # Replicated Docker Image for Statsd + Carbon + Graphite
 
 Originally based off of: https://github.com/CastawayLabs/graphite-statsd

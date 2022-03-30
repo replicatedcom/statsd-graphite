@@ -54,7 +54,7 @@ workflows:
           filters:
             branches:
               ignore:
-                - master
+                - main
 
   build_accept_deploy:
     jobs:
@@ -62,7 +62,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
 
   release:
     jobs:

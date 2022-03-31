@@ -10,3 +10,9 @@ ignore:
   #     version: 1.5.1
   #     type: npm
   #     location: "/usr/local/lib/node_modules/**"
+
+- package:
+    type: python
+
+- package:
+    type: npm

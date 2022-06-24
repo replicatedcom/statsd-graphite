@@ -12,7 +12,7 @@ build:
 # This command will build an image that will be based on the last successully built image.
 .PHONY: build-hack
 build-hack:
-	docker build --pull -f Dockerfile.hack -t $(IMAGE_NAME) .
+	docker build --no-cache -f Dockerfile.hack -t $(IMAGE_NAME) .
 
 .PHONY: scan
 scan:

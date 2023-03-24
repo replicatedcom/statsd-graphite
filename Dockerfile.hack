@@ -8,4 +8,4 @@ RUN apt-get update && apt-get upgrade -y \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*
 
-VOLUME /tmp /var/run/uwsgi
+VOLUME /tmp /var/run/uwsgi /var/run/nginx

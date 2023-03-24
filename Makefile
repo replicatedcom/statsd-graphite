@@ -1,6 +1,9 @@
 IMAGE_NAME ?= registry.replicated.com/library/statsd-graphite:latest
 ANCHORE_VERSION := v0.8.2
 
+SHELL := /bin/bash -o pipefail
+CURRENT_USER = $(shell id -u -n)
+
 export IMAGE_NAME
 export ANCHORE_VERSION
 
@@ -21,3 +24,13 @@ scan:
 .PHONY: push
 push:
 	docker push $(IMAGE_NAME)
+
+.PHONY: build-ttl.sh
+build-ttl.sh:
+	docker build -t ttl.sh/${CURRENT_USER}/statsd-graphite:12h .
+	docker push ttl.sh/${CURRENT_USER}/statsd-graphite:12h
+
+.PHONY: build-hack-ttl.sh
+build-hack-ttl.sh:
+	docker build -f Dockerfile.hack -t ttl.sh/${CURRENT_USER}/statsd-graphite:12h .
+	docker push ttl.sh/${CURRENT_USER}/statsd-graphite:12h

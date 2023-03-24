@@ -94,7 +94,7 @@ EXPOSE 2443
 EXPOSE 8125/udp
 
 # Enable users of this container to mount their volumes (optional)
-VOLUME /var/log /opt/graphite/storage /opt/graphite/conf /crypto /tmp
+VOLUME /var/log /opt/graphite/storage /opt/graphite/conf /crypto /tmp /var/run/uwsgi
 
 # Start supervisor by default
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-l", "/var/log/supervisor/supervisord.log", "-j", "/var/run/supervisord/supervisord.pid"]

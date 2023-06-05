@@ -1,11 +1,9 @@
 IMAGE_NAME ?= registry.replicated.com/library/statsd-graphite:latest
-ANCHORE_VERSION := v0.8.2
 
 SHELL := /bin/bash -o pipefail
 CURRENT_USER = $(shell id -u -n)
 
 export IMAGE_NAME
-export ANCHORE_VERSION
 
 .PHONY: build
 build:

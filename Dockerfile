@@ -23,14 +23,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tzdata \
     \
     \
-    libp11-kit0 \
   && apt-get clean \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*
 
-ARG version=1.1.8
-ARG statsd_version=0.9.0
+ARG version=1.1.10
+ARG statsd_version=0.10.1
 
+ARG python_extra_flags="--single-version-externally-managed --root=/"
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential python3-pip python3-setuptools libffi-dev git \
   && pip3 install wheel \
   && pip3 install uwsgi \
@@ -39,16 +39,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
   && . /opt/graphite/bin/activate \
   && git clone -b ${version} --depth 1 https://github.com/graphite-project/whisper.git /usr/local/src/whisper \
   && cd /usr/local/src/whisper \
-  && python3 ./setup.py install \
+  && python3 ./setup.py install $python_extra_flags \
   && git clone -b ${version} --depth 1 https://github.com/graphite-project/carbon.git /usr/local/src/carbon \
   && cd /usr/local/src/carbon \
   && pip3 install -r requirements.txt \
-  && python3 ./setup.py install \
+  && python3 ./setup.py install  $python_extra_flags\
   && git clone -b ${version} --depth 1 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web \
   && cd /usr/local/src/graphite-web \
   && sed -i 's/pyparsing.*/pyparsing>=2\.3\.0,<3\.0\.0/' requirements.txt \
   && pip3 install -r requirements.txt \
-  && python3 ./setup.py install \
+  && python3 ./setup.py install $python_extra_flags \
   && git clone https://github.com/statsd/statsd.git /opt/statsd \
   && cd /opt/statsd \
   && git checkout tags/v"${statsd_version}" \
@@ -71,7 +71,7 @@ ADD conf/carbon.sh /carbon.sh
 ADD conf/statsd/config.js /opt/statsd/config.js
 ADD conf/graphite/ /opt/graphite/conf/
 ADD conf/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
-RUN mv /opt/graphite/conf/graphite.wsgi.example /opt/graphite/conf/wsgi.py
+RUN mv /usr/local/src/graphite-web/conf/graphite.wsgi.example /opt/graphite/conf/wsgi.py
 
 # Set up required directories with permissions
 RUN mkdir -p /var/log/supervisor /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
@@ -94,7 +94,11 @@ EXPOSE 2443
 EXPOSE 8125/udp
 
 # Enable users of this container to mount their volumes (optional)
+<<<<<<< HEAD
 VOLUME /var/log /opt/graphite/storage /opt/graphite/conf /crypto /tmp /var/run/uwsgi /var/run/nginx
+=======
+VOLUME ["/opt/graphite/conf", "/opt/graphite/storage", "/opt/graphite/webapp/graphite/functions/custom", "/etc/nginx", "/opt/statsd/config", "/etc/logrotate.d", "/var/log", "/var/run", "/var/lib/redis", "/tmp"]
+>>>>>>> fix: readonly root fs
 
 # Start supervisor by default
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-l", "/var/log/supervisor/supervisord.log", "-j", "/var/run/supervisord/supervisord.pid"]

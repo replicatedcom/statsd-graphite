@@ -14,7 +14,7 @@ jobs:
             echo $DOCKER_REPLICATED_PASS | docker login registry.replicated.com -u $DOCKER_REPLICATED_USER --password-stdin
             export BUILD_SHA=${CIRCLE_SHA1:0:7} 
             export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$BUILD_SHA
-            make build-hack scan
+            make build scan
 
   deploy_unstable:
     docker:
@@ -28,7 +28,7 @@ jobs:
             echo $DOCKER_REPLICATED_PASS | docker login registry.replicated.com -u $DOCKER_REPLICATED_USER --password-stdin
             export BUILD_SHA=${CIRCLE_SHA1:0:7} 
             export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$BUILD_SHA
-            make build-hack scan push
+            make build scan push
 
   deploy_stable:
     docker:
@@ -41,7 +41,7 @@ jobs:
           command: |
             echo $DOCKER_REPLICATED_PASS | docker login registry.replicated.com -u $DOCKER_REPLICATED_USER --password-stdin
             export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$CIRCLE_TAG
-            make build-hack scan push
+            make build scan push
 
 workflows:
   version: 2

@@ -4,8 +4,7 @@ jobs:
 
   build_and_test:
     docker:
-      - image: cimg/go:1.14
-    working_directory: /home/circleci/go/src/github.com/replicatedcom/statsd-graphite
+      - image: cimg/go:1.20
     steps:
       - checkout
       - setup_remote_docker
@@ -15,12 +14,11 @@ jobs:
             echo $DOCKER_REPLICATED_PASS | docker login registry.replicated.com -u $DOCKER_REPLICATED_USER --password-stdin
             export BUILD_SHA=${CIRCLE_SHA1:0:7} 
             export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$BUILD_SHA
-            make build-hack scan
+            make build scan
 
   deploy_unstable:
     docker:
-      - image: cimg/go:1.14
-    working_directory: /home/circleci/go/src/github.com/replicatedcom/statsd-graphite
+      - image: cimg/go:1.20
     steps:
       - checkout
       - setup_remote_docker
@@ -30,12 +28,11 @@ jobs:
             echo $DOCKER_REPLICATED_PASS | docker login registry.replicated.com -u $DOCKER_REPLICATED_USER --password-stdin
             export BUILD_SHA=${CIRCLE_SHA1:0:7} 
             export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$BUILD_SHA
-            make build-hack scan push
+            make build scan push
 
   deploy_stable:
     docker:
-      - image: cimg/go:1.14
-    working_directory: /home/circleci/go/src/github.com/replicatedcom/statsd-graphite
+      - image: cimg/go:1.20
     steps:
       - checkout
       - setup_remote_docker
@@ -44,7 +41,7 @@ jobs:
           command: |
             echo $DOCKER_REPLICATED_PASS | docker login registry.replicated.com -u $DOCKER_REPLICATED_USER --password-stdin
             export IMAGE_NAME=registry.replicated.com/library/statsd-graphite:$CIRCLE_TAG
-            make build-hack scan push
+            make build scan push
 
 workflows:
   version: 2

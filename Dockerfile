@@ -94,7 +94,7 @@ EXPOSE 2443
 EXPOSE 8125/udp
 
 # Enable users of this container to mount their volumes (optional)
-VOLUME ["/opt/graphite/conf", "/opt/graphite/storage", "/opt/graphite/webapp/graphite/functions/custom", "/etc/nginx", "/opt/statsd/config", "/etc/logrotate.d", "/var/log", "/var/lib/redis", "/crypto", "/tmp", "/var/run/uwsgi", "/var/run/nginx"]
+VOLUME ["/opt/graphite/conf", "/opt/graphite/storage", "/opt/graphite/webapp/graphite/functions/custom", "/etc/nginx", "/opt/statsd/config", "/etc/logrotate.d", "/var/log", "/var/lib/redis", "/crypto", "/tmp", "/var/run/uwsgi", "/var/run/nginx", "/opt/graphite/lib/twisted/plugins", "/opt/graphite/lib/python3.7/site-packages/twisted/plugins"]
 
 # Start supervisor by default
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf", "-l", "/var/log/supervisor/supervisord.log", "-j", "/var/run/supervisord/supervisord.pid"]

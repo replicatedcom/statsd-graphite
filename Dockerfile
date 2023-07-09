@@ -56,7 +56,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
   && apt-get remove -y build-essential python3-pip python3-setuptools libffi-dev git \
   && apt-get clean \
   && apt-get autoremove -y \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /root/.npm/_cacache
 
 # Configure nginx site
 RUN rm -rf /etc/nginx/sites-enabled/*

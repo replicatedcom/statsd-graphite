@@ -4,16 +4,22 @@ FROM debian:buster-slim
 # Initial work from https://github.com/hopsoft/docker-graphite-statsd
 # More from https://github.com/yesoreyeram/graphite-setup
 
-# Install dependencies
+# Things needed to install more things
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
-    gnupg1 \
-  && curl -LO https://nginx.org/keys/nginx_signing.key && apt-key add nginx_signing.key && rm nginx_signing.key \
-  && echo "deb https://nginx.org/packages/mainline/debian/ buster nginx" >> /etc/apt/sources.list \
-  && echo "deb-src http://nginx.org/packages/mainline/debian/ buster nginx" >> /etc/apt/sources.list \
-  && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
-  && apt-get install -y --no-install-recommends \
+    gnupg \
+  && apt-get clean \
+  && apt-get autoremove -y \
+  && rm -rf /var/lib/apt/lists/*
+
+# Setup nodejs repo
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+ENV NODE_MAJOR=16
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
     nginx \
     nodejs \
     openssl \

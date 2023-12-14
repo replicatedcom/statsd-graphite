@@ -1,8 +1,4 @@
-FROM debian:buster-slim
-
-# Borrowed from https://github.com/CastawayLabs/graphite-statsd
-# Initial work from https://github.com/hopsoft/docker-graphite-statsd
-# More from https://github.com/yesoreyeram/graphite-setup
+FROM debian:bookworm-slim
 
 # Things needed to install more things
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -37,29 +33,14 @@ ARG version=1.1.10
 ARG statsd_version=0.10.1
 
 ARG python_extra_flags="--single-version-externally-managed --root=/"
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential python3-pip python3-setuptools libffi-dev git \
-  && pip3 install wheel \
-  && pip3 install uwsgi \
-  && pip3 install virtualenv==16.7.10 \
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y graphite-web graphite-carbon uwsgi uwsgi-plugin-python3 python3-virtualenv git npm \
   && virtualenv /opt/graphite \
-  && . /opt/graphite/bin/activate \
-  && git clone -b ${version} --depth 1 https://github.com/graphite-project/whisper.git /usr/local/src/whisper \
-  && cd /usr/local/src/whisper \
-  && python3 ./setup.py install $python_extra_flags \
-  && git clone -b ${version} --depth 1 https://github.com/graphite-project/carbon.git /usr/local/src/carbon \
-  && cd /usr/local/src/carbon \
-  && pip3 install -r requirements.txt \
-  && python3 ./setup.py install  $python_extra_flags\
-  && git clone -b ${version} --depth 1 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web \
-  && cd /usr/local/src/graphite-web \
-  && sed -i 's/pyparsing.*/pyparsing>=2\.3\.0,<3\.0\.0/' requirements.txt \
-  && pip3 install -r requirements.txt \
-  && python3 ./setup.py install $python_extra_flags \
   && git clone https://github.com/statsd/statsd.git /opt/statsd \
   && cd /opt/statsd \
   && git checkout tags/v"${statsd_version}" \
   && npm install \
-  && apt-get remove -y build-essential python3-pip python3-setuptools libffi-dev git \
+  && apt-get remove -y build-essential python3-pip libffi-dev git npm \
   && apt-get clean \
   && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/* \
@@ -77,24 +58,22 @@ ADD conf/supervisord.conf /etc/supervisord.conf
 ADD conf/carbon.sh /carbon.sh
 ADD conf/statsd/config.js /opt/statsd/config.js
 ADD conf/graphite/ /opt/graphite/conf/
-ADD conf/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
-RUN mv /usr/local/src/graphite-web/conf/graphite.wsgi.example /opt/graphite/conf/wsgi.py
+ADD conf/wsgi.py /opt/graphite/conf/wsgi.py
+ADD conf/local_settings.py /usr/lib/python3/dist-packages/graphite/local_settings.py
 
 # Set up required directories with permissions
-RUN mkdir -p /var/log/supervisor /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
-RUN chmod -R a+rwx /var/log/supervisor /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp
+RUN mkdir -p /var/log/supervisor /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp /opt/graphite/storage/log/webapp
+RUN chmod -R a+rwx /var/log/supervisor /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp /opt/graphite/storage/log/webapp
 RUN chmod a+x /carbon.sh
 
 # Configure django DB
 RUN mkdir -p /var/log/graphite/ \
-  && PYTHONPATH=/opt/graphite/webapp /opt/graphite/bin/django-admin.py collectstatic --noinput --settings=graphite.settings \
-  && PYTHONPATH=/opt/graphite/webapp /opt/graphite/bin/django-admin.py migrate --noinput --settings=graphite.settings --run-syncdb
+  && PYTHONPATH=/opt/graphite/webapp /usr/lib/python3/dist-packages/django/bin/django-admin.py migrate --pythonpath=/opt/graphite/webapp --noinput --settings=graphite.settings --run-syncdb
 
 RUN chmod -R a+rwx \
   /opt/graphite/storage \
   # Fixes error Unable to write to plugin cache
-  /opt/graphite/lib/twisted/plugins \
-  /opt/graphite/lib/python3.7/site-packages/twisted/plugins
+  /usr/lib/python3/dist-packages/twisted/plugins
 
 # Expose common ports
 EXPOSE 2443

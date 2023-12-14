@@ -6,4 +6,4 @@
 # The --pidfile overrides the default location which is on a mounted volume, which survives container restarts.
 
 rm -f /tmp/carbon.pid
-/opt/graphite/bin/carbon-cache.py start --nodaemon --pidfile=/tmp/carbon.pid
+/usr/bin/carbon-cache start --nodaemon --pidfile=/tmp/carbon.pid --config=/opt/graphite/conf/carbon.conf

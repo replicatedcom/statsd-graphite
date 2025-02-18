@@ -5,7 +5,7 @@ The build process has been updated for now to use the last successfully built im
 
 # Replicated Docker Image for Statsd + Carbon + Graphite
 
-Originally based off of: https://github.com/CastawayLabs/graphite-statsd
+Originally based off of: https://github.com/CastawayLabs/graphite-statsd.
 
 To deploy a new image, push a tag in the format `/^[0-9]+(\.[0-9]+)*(-.*)*/`.
 

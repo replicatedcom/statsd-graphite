@@ -1,7 +1,4 @@
 ignore:
-  - vulnerability: CVE-2023-47038
-  - vulnerability: CVE-2023-5981
-
   - package:
       type: python
 

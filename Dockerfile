@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 # Things needed to install more things
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -68,7 +68,7 @@ RUN chmod a+x /carbon.sh
 
 # Configure django DB
 RUN mkdir -p /var/log/graphite/ \
-  && PYTHONPATH=/opt/graphite/webapp /usr/lib/python3/dist-packages/django/bin/django-admin.py migrate --pythonpath=/opt/graphite/webapp --noinput --settings=graphite.settings --run-syncdb
+  && PYTHONPATH=/opt/graphite/webapp django-admin migrate --pythonpath=/opt/graphite/webapp --noinput --settings=graphite.settings --run-syncdb
 
 RUN chmod -R a+rwx \
   /opt/graphite/storage \

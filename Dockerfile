@@ -35,7 +35,7 @@ ARG statsd_version=0.10.1
 ARG python_extra_flags="--single-version-externally-managed --root=/"
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y graphite-web graphite-carbon uwsgi uwsgi-plugin-python3 python3-virtualenv git npm \
-  && virtualenv /opt/graphite \
+  && virtualenv --system-site-packages /opt/graphite \
   && git clone https://github.com/statsd/statsd.git /opt/statsd \
   && cd /opt/statsd \
   && git checkout tags/v"${statsd_version}" \
@@ -59,11 +59,12 @@ ADD conf/carbon.sh /carbon.sh
 ADD conf/statsd/config.js /opt/statsd/config.js
 ADD conf/graphite/ /opt/graphite/conf/
 ADD conf/wsgi.py /opt/graphite/conf/wsgi.py
-ADD conf/local_settings.py /usr/lib/python3/dist-packages/graphite/local_settings.py
+RUN mkdir -p /etc/graphite
+ADD conf/local_settings.py /etc/graphite/local_settings.py
 
 # Set up required directories with permissions
 RUN mkdir -p /var/log/supervisor /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp /opt/graphite/storage/log/webapp
-RUN chmod -R a+rwx /var/log/supervisor /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp /opt/graphite/storage/log/webapp
+RUN chmod -R a+rwx /var/log/supervisor /var/log/nginx /opt/graphite/storage /var/run/supervisord /var/run/nginx /var/run/uwsgi /crypto /var/lib/nginx /var/tmp /opt/graphite/storage/log/webapp /etc/graphite
 RUN chmod a+x /carbon.sh
 
 # Configure django DB

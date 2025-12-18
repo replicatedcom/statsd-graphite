@@ -19,5 +19,5 @@ push:
 
 .PHONY: build-ttl.sh
 build-ttl.sh:
-	docker build -t ttl.sh/${CURRENT_USER}/statsd-graphite:12h .
+	docker build --platform linux/amd64 -t ttl.sh/${CURRENT_USER}/statsd-graphite:12h .
 	docker push ttl.sh/${CURRENT_USER}/statsd-graphite:12h
